@@ -1,0 +1,31 @@
+<div class="btn-group">
+    <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
+        File <span class="caret"></span>
+    </button>
+    <ul class="dropdown-menu" role="menu">
+        <li><a href="#" (click)="create()">Create</a></li>
+        <li><a href="#" (click)="open()">Open</a></li>
+        <li *ngIf="interpretManager.curFile != null"><a href="#" (click)="save()">Save</a></li>
+        <li *ngIf="interpretManager.curFile == null" class="disabled"><a href="#" (click)="save()">Save</a></li>
+    </ul>
+</div>
+
+<div class="panel" *ngIf="files.length != 0">
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Files</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr *ngFor="let file of files">
+                <td>
+                    <a href="#" (click)="choose(file)"> {{file.Name}} </a>
+                    <button type="button" class="btn btn-default" aria-label="Left Align" (click)="close(file)">
+                        <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
+                    </button>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</div>
