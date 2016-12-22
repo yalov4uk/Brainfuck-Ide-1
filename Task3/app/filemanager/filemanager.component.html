@@ -1,14 +1,21 @@
-<div class="btn-group">
-    <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
+<div class="dropdown">
+    <a id="dLabel" role="button" data-toggle="dropdown" class="btn btn-primary" href="#">
         File <span class="caret"></span>
-    </button>
-    <ul class="dropdown-menu" role="menu">
+    </a>
+    <ul class="dropdown-menu multi-level" role="menu" aria-labelledby="dropdownMenu">
         <li><a href="#" (click)="create()">Create</a></li>
-        <li><a href="#" (click)="open()">Open</a></li>
         <li *ngIf="interpretManager.curFile != null"><a href="#" (click)="save()">Save</a></li>
         <li *ngIf="interpretManager.curFile == null" class="disabled"><a href="#" (click)="save()">Save</a></li>
+        <li class="divider"></li>
+        <li class="dropdown-submenu">
+            <a tabindex="-1" href="#">Open ...</a>
+            <ul class="dropdown-menu">
+                <li *ngFor="let usfile of curUserFiles"><a href="#" (click)="open(usfile.Id)">{{usfile.Name}}</a></li>
+            </ul>
+        </li>
     </ul>
 </div>
+
 
 <div class="panel" *ngIf="files.length != 0">
     <h2>Files</h2>

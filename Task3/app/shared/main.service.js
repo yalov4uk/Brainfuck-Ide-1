@@ -31,14 +31,24 @@ var MainService = (function () {
     };
     MainService.prototype.run = function (interpretManager, operations) {
         interpretManager.debug = false;
-        while (interpretManager.contentPointer < interpretManager.curFile.Content.length && !interpretManager.debug) {
-            operations[interpretManager.curFile.Content[interpretManager.contentPointer]].execute(interpretManager);
+        try {
+            while (interpretManager.contentPointer < interpretManager.curFile.Content.length && !interpretManager.debug)
+                operations[interpretManager.curFile.Content[interpretManager.contentPointer]].execute(interpretManager);
+        }
+        catch (Error) {
+            interpretManager.output += Error.message + '\n';
+            interpretManager.contentPointer = interpretManager.curFile.Content.length;
         }
         this.initInterpretManager(interpretManager);
     };
     MainService.prototype.step = function (interpretManager, operations) {
-        if (interpretManager.contentPointer < interpretManager.curFile.Content.length && interpretManager.debug) {
-            operations[interpretManager.curFile.Content[interpretManager.contentPointer]].execute(interpretManager);
+        try {
+            if (interpretManager.contentPointer < interpretManager.curFile.Content.length && interpretManager.debug)
+                operations[interpretManager.curFile.Content[interpretManager.contentPointer]].execute(interpretManager);
+        }
+        catch (Error) {
+            interpretManager.output += Error.message + '\n';
+            interpretManager.contentPointer = interpretManager.curFile.Content.length;
         }
         this.initInterpretManager(interpretManager);
     };
@@ -54,27 +64,33 @@ var MainService = (function () {
             interpretManager.output += '\n';
         }
     };
-    MainService.prototype.create = function (path) {
+    MainService.prototype.create = function (name) {
         var headers = new http_1.Headers({ 'Content-Type': 'application/json;charset=utf-8' });
-        return this.http.post('./Home/Create/', JSON.stringify(new filemodel_1.FileModel("", path, "")), { headers: headers })
-            .map(function (resp) {
-            var curFile = resp.json();
-            return new filemodel_1.FileModel(curFile.Name, curFile.Path, curFile.Content);
-        })
+        return this.http.post('./Home/Create/', JSON.stringify(new filemodel_1.FileModel(0, name, '')), { headers: headers })
+            .map(function (resp) { return resp.json(); })
             .catch(function (error) { return Observable_1.Observable.throw(error); });
     };
-    MainService.prototype.open = function (path) {
-        return this.http.get('./Home/Open?path=' + path)
-            .map(function (resp) {
-            var curFile = resp.json();
-            return new filemodel_1.FileModel(curFile.Name, curFile.Path, curFile.Content);
-        })
+    MainService.prototype.open = function (id) {
+        return this.http.get('./Home/Open?id=' + id)
+            .map(function (resp) { return resp.json(); })
             .catch(function (error) { return Observable_1.Observable.throw(error); });
     };
     MainService.prototype.save = function (curFile) {
         var headers = new http_1.Headers({ 'Content-Type': 'application/json;charset=utf-8' });
         return this.http.post('./Home/Save/', JSON.stringify(curFile), { headers: headers })
             .map(function (resp) { return resp.json(); })
+            .catch(function (error) { return Observable_1.Observable.throw(error); });
+    };
+    MainService.prototype.getFiles = function () {
+        return this.http.get('./Home/GetFiles/')
+            .map(function (resp) {
+            var result = [], files = resp.json();
+            for (var _i = 0, files_1 = files; _i < files_1.length; _i++) {
+                var file = files_1[_i];
+                result.push(new filemodel_1.FileModel(file.Id, file.Name, file.Content));
+            }
+            return result;
+        })
             .catch(function (error) { return Observable_1.Observable.throw(error); });
     };
     MainService = __decorate([

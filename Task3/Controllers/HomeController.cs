@@ -1,90 +1,51 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
+﻿using System.Linq;
 using System.Web.Mvc;
 using Task3.Models;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Serialization;
-using System.IO;
-using System.Text.RegularExpressions;
+using Microsoft.AspNet.Identity;
 
 namespace Task3.Controllers
 {
     public class HomeController : Controller
     {
+        public ApplicationContext db = new ApplicationContext();
         public ActionResult Index()
         {
             return View();
         }
 
-        /*[HttpPost]
-        public ActionResult CreateFile(string name)
+        [HttpPost]
+        public ActionResult Create(FileViewModel file)
         {
-            Models.File file = new Models.File { Name = name, Content = "", Path = @"C:\Codes\Task3\" + name + ".txt" };
-            FileStream fs = System.IO.File.Create(file.Path);
-            fs.Close();
-            db.Files.Add(file);
+            FileModel curFile = new FileModel{ Name = file.Name, Content = file.Content, UserId = User.Identity.GetUserId() };
+            db.Files.Add(curFile);
             db.SaveChanges();
-            return Json(file);
-        }*/
+            return Json(new FileViewModel { Id = curFile.Id, Name = curFile.Name, Content = curFile.Content });
+        }
 
         [HttpGet]
-        public ActionResult Open(string path)
+        public ActionResult Open(int? id)
         {
-            if (path == null)
+            if (id == null)
                 return HttpNotFound();
-            try
-            {
-                FileModel curFile;
-                using (StreamReader sr = new StreamReader(path))
-                {
-                    Match match = new Regex(@"\w+.txt$").Match(path);
-                    string name = match.Groups[0].Value.Substring(0, match.Groups[0].Value.Length - 4);
-                    curFile = new FileModel { Name = name, Path = path, Content = sr.ReadToEnd() };
-                }
-                return Json(curFile, JsonRequestBehavior.AllowGet);
-            }
-            catch (Exception)
-            {
-                return HttpNotFound();
-            }
+            FileModel curFile = db.Files.Find(id);
+            return Json(new FileViewModel{ Id = curFile.Id, Name = curFile.Name, Content = curFile.Content }, JsonRequestBehavior.AllowGet);
         }
 
         [HttpPost]
-        public ActionResult Save(FileModel curFile)
+        public ActionResult Save(FileViewModel file)
         {
-            var a = Json(curFile);
-            try
-            {
-                using (StreamWriter sw = new StreamWriter(curFile.Path))
-                {
-                    sw.Write(curFile.Content);
-                    return Json(true);
-                }
-            }
-            catch (Exception)
-            {
-                return null;
-            }
+            FileModel curFile = db.Files.Find(file.Id);
+            curFile.Content = file.Content;
+            db.SaveChanges();
+            return Json(true);
         }
 
-        [HttpPost]
-        public ActionResult Create(FileModel curFile)
+        [HttpGet]
+        public ActionResult GetFiles()
         {
-            if (curFile.Path == null)
-                return HttpNotFound();
-            try
-            {
-                System.IO.File.WriteAllText(curFile.Path, "");
-                Match match = new Regex(@"\w+.txt$").Match(curFile.Path);
-                curFile.Name = match.Groups[0].Value.Substring(0, match.Groups[0].Value.Length - 4);
-                return Json(curFile);
-            }
-            catch (Exception)
-            {
-                return HttpNotFound();
-            }
+            string curUserId = User.Identity.GetUserId();
+            var files = db.Files;
+            return Json(files.ToArray(), JsonRequestBehavior.AllowGet);
         }
     }
 }

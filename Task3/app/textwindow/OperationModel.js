@@ -80,10 +80,6 @@ var StartCase = (function () {
         if (interpretManager.memory[interpretManager.memoryPointer] == 0) {
             var stacklen = interpretManager.caseStack.push(interpretManager.contentPointer) - 1;
             while (interpretManager.contentPointer++ + 1) {
-                if (interpretManager.contentPointer < interpretManager.curFile.Content.length ? false : true) {
-                    console.log('start case error');
-                    break;
-                }
                 if (interpretManager.curFile.Content[interpretManager.contentPointer] == ']') {
                     interpretManager.caseStack.pop();
                     if (stacklen == interpretManager.caseStack.length) {
@@ -91,9 +87,8 @@ var StartCase = (function () {
                         break;
                     }
                 }
-                else if (interpretManager.curFile.Content[interpretManager.contentPointer] == '[') {
+                else if (interpretManager.curFile.Content[interpretManager.contentPointer] == '[')
                     interpretManager.caseStack.push(interpretManager.contentPointer);
-                }
             }
         }
         else {
@@ -107,13 +102,7 @@ var EndCase = (function () {
     function EndCase() {
     }
     EndCase.prototype.execute = function (interpretManager) {
-        if (interpretManager.caseStack.length == 0) {
-            console.log('error in end case (no start case)');
-            interpretManager.contentPointer++;
-        }
-        else {
-            interpretManager.contentPointer = interpretManager.caseStack.pop();
-        }
+        interpretManager.contentPointer = interpretManager.caseStack.pop();
     };
     return EndCase;
 }());

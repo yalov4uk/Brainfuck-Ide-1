@@ -1,11 +1,8 @@
 "use strict";
 var FileModel = (function () {
-    function FileModel(Name, Path, Content) {
-        if (Name === void 0) { Name = ''; }
-        if (Path === void 0) { Path = ''; }
-        if (Content === void 0) { Content = ''; }
+    function FileModel(Id, Name, Content) {
+        this.Id = Id;
         this.Name = Name;
-        this.Path = Path;
         this.Content = Content;
     }
     return FileModel;

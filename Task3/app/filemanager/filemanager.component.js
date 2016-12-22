@@ -23,32 +23,39 @@ var FileManagerComponent = (function () {
     };
     FileManagerComponent.prototype.create = function () {
         var _this = this;
-        var path = prompt('Enter path', '');
-        if (path)
-            this.mainService.create(path).subscribe(function (curFile) {
+        var name = prompt('Enter file name', '');
+        if (name)
+            this.mainService.create(name).subscribe(function (curFile) {
                 _this.files.push(curFile);
                 _this.interpretManager.curFile = curFile;
             });
     };
-    FileManagerComponent.prototype.open = function () {
+    FileManagerComponent.prototype.open = function (id) {
         var _this = this;
-        var path = prompt('Enter path', '');
-        if (path)
-            this.mainService.open(path).subscribe(function (curFile) {
-                _this.files.push(curFile);
-                _this.interpretManager.curFile = curFile;
-            });
+        this.mainService.open(id).subscribe(function (curFile) {
+            _this.files.push(curFile);
+            _this.interpretManager.curFile = curFile;
+        });
     };
     FileManagerComponent.prototype.save = function () {
         var _this = this;
-        if (this.interpretManager.curFile)
+        if (this.interpretManager.curFile) {
             this.mainService.save(this.interpretManager.curFile).
-                subscribe(function (body) { return _this.interpretManager.output += '\n' + body; });
+                subscribe(function (body) { return body == true ?
+                _this.interpretManager.output += _this.interpretManager.curFile.Name + ' saved\n' :
+                _this.interpretManager.output += 'Failed\n'; });
+            if (!this.curUserFiles.includes(this.interpretManager.curFile))
+                this.curUserFiles.push(this.interpretManager.curFile);
+        }
     };
     __decorate([
         core_1.Input(), 
         __metadata('design:type', Array)
     ], FileManagerComponent.prototype, "files", void 0);
+    __decorate([
+        core_1.Input(), 
+        __metadata('design:type', Array)
+    ], FileManagerComponent.prototype, "curUserFiles", void 0);
     __decorate([
         core_1.Input(), 
         __metadata('design:type', Object)

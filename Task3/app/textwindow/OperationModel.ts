@@ -68,10 +68,6 @@ class StartCase implements IOperation {
         if (interpretManager.memory[interpretManager.memoryPointer] == 0) {
             let stacklen = interpretManager.caseStack.push(interpretManager.contentPointer) - 1;
             while (interpretManager.contentPointer++ + 1) {
-                if (interpretManager.contentPointer < interpretManager.curFile.Content.length ? false : true) {
-                    console.log('start case error');
-                    break;
-                }
                 if (interpretManager.curFile.Content[interpretManager.contentPointer] == ']') {
                     interpretManager.caseStack.pop();
                     if (stacklen == interpretManager.caseStack.length) {
@@ -79,9 +75,8 @@ class StartCase implements IOperation {
                         break;
                     }
                 }
-                else if (interpretManager.curFile.Content[interpretManager.contentPointer] == '[') {
+                else if (interpretManager.curFile.Content[interpretManager.contentPointer] == '[')
                     interpretManager.caseStack.push(interpretManager.contentPointer);
-                }
             }
         }
         else {
@@ -93,13 +88,7 @@ class StartCase implements IOperation {
 
 class EndCase implements IOperation {
     execute(interpretManager: IInterpretManager): void {
-        if (interpretManager.caseStack.length == 0) {
-            console.log('error in end case (no start case)');
-            interpretManager.contentPointer++;
-        }
-        else {
             interpretManager.contentPointer = interpretManager.caseStack.pop();
-        }
     }
 }
 

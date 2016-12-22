@@ -1,0 +1,28 @@
+﻿@model Task3.Models.RegisterModel
+@{
+    ViewBag.Title = "Register";
+}
+
+<h2>Register</h2>
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+
+    <div>
+        @Html.ValidationSummary()
+        <p>
+            <label>User name</label>
+            @Html.EditorFor(model => model.UserName)
+        </p>
+        <p>
+            <label>Password</label>
+            @Html.EditorFor(model => model.Password)
+        </p>
+        <p>
+            <label>Confirm Password</label>
+            @Html.EditorFor(model => model.PasswordConfirm)
+        </p>
+        <p><button type="submit">Войти</button></p>
+    </div>
+}

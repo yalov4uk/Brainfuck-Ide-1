@@ -12,6 +12,7 @@ import { IInterpretManager } from '../shared/InterpretManager';
 })
 export class FileManagerComponent {
     @Input() files: IFileModel[];
+    @Input() curUserFiles: IFileModel[];
     @Input() interpretManager: IInterpretManager;
     @Output() choosed: EventEmitter<IFileModel>;
 
@@ -28,26 +29,29 @@ export class FileManagerComponent {
     }
 
     create(): void {
-        let path = prompt('Enter path', '');
-        if (path) 
-            this.mainService.create(path).subscribe((curFile) => {
+        let name = prompt('Enter file name', '');
+        if (name)
+            this.mainService.create(name).subscribe((curFile) => {
                 this.files.push(curFile);
                 this.interpretManager.curFile = curFile;
             });
     }
 
-    open(): void {
-        let path = prompt('Enter path', '');
-        if (path)
-            this.mainService.open(path).subscribe((curFile) => {
-                this.files.push(curFile);
-                this.interpretManager.curFile = curFile;
-            });
+    open(id: number): void {
+        this.mainService.open(id).subscribe((curFile) => {
+            this.files.push(curFile);
+            this.interpretManager.curFile = curFile;
+        });
     }
 
     save(): void {
-        if (this.interpretManager.curFile)
+        if (this.interpretManager.curFile) {
             this.mainService.save(this.interpretManager.curFile).
-                subscribe((body) => this.interpretManager.output += '\n' + body);
+                subscribe((body) => body == true ?
+                    this.interpretManager.output += this.interpretManager.curFile.Name + ' saved\n' :
+                    this.interpretManager.output += 'Failed\n');
+            if (!this.curUserFiles.includes(this.interpretManager.curFile))
+                this.curUserFiles.push(this.interpretManager.curFile);
+        }
     }
 }

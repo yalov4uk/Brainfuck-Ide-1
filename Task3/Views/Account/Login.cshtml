@@ -1,0 +1,25 @@
+﻿@model Task3.Models.LoginModel
+@{
+    ViewBag.Title = "Login";
+}
+
+<h2>Login</h2>
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+
+    <div>
+        @Html.ValidationSummary()
+        <input type="hidden" name="returnUrl" value="@ViewBag.returnUrl" />
+        <p>
+            <label>User name</label><br />
+            @Html.EditorFor(model => model.UserName)
+        </p>
+        <p>
+            <label>Password</label><br />
+            @Html.EditorFor(model => model.Password)
+        </p>
+        <p><button type="submit">Войти</button></p>
+    </div>
+}
