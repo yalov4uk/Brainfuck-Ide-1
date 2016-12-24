@@ -56,6 +56,7 @@ namespace Task3.Controllers
 
         public ActionResult Login(string returnUrl)
         {
+            Logout();
             ViewBag.returnUrl = returnUrl;
             return View();
         }

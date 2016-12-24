@@ -35,6 +35,7 @@ var FileManagerComponent = (function () {
         this.mainService.open(id).subscribe(function (curFile) {
             _this.files.push(curFile);
             _this.interpretManager.curFile = curFile;
+            console.log(curFile);
         });
     };
     FileManagerComponent.prototype.save = function () {
@@ -44,9 +45,22 @@ var FileManagerComponent = (function () {
                 subscribe(function (body) { return body == true ?
                 _this.interpretManager.output += _this.interpretManager.curFile.Name + ' saved\n' :
                 _this.interpretManager.output += 'Failed\n'; });
-            if (!this.curUserFiles.includes(this.interpretManager.curFile))
+            if (!this.curUserFiles.find(function (f) { return f.Id == _this.interpretManager.curFile.Id; }))
                 this.curUserFiles.push(this.interpretManager.curFile);
         }
+    };
+    FileManagerComponent.prototype.getFiles = function () {
+        var _this = this;
+        this.mainService.getFiles().subscribe(function (files) {
+            var _loop_1 = function(file) {
+                if (!_this.curUserFiles.find(function (f) { return f.Id == file.Id; }))
+                    _this.curUserFiles.push(file);
+            };
+            for (var _i = 0, files_1 = files; _i < files_1.length; _i++) {
+                var file = files_1[_i];
+                _loop_1(file);
+            }
+        });
     };
     __decorate([
         core_1.Input(), 

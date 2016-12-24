@@ -41,7 +41,8 @@ export class FileManagerComponent {
         this.mainService.open(id).subscribe((curFile) => {
             this.files.push(curFile);
             this.interpretManager.curFile = curFile;
-        });
+            console.log(curFile);
+        }); 
     }
 
     save(): void {
@@ -50,8 +51,17 @@ export class FileManagerComponent {
                 subscribe((body) => body == true ?
                     this.interpretManager.output += this.interpretManager.curFile.Name + ' saved\n' :
                     this.interpretManager.output += 'Failed\n');
-            if (!this.curUserFiles.includes(this.interpretManager.curFile))
+            if (!this.curUserFiles.find(f => f.Id == this.interpretManager.curFile.Id))
                 this.curUserFiles.push(this.interpretManager.curFile);
         }
+    }
+
+    getFiles(): void {
+        this.mainService.getFiles().subscribe((files) => {
+            for (let file of files) {
+                if (!this.curUserFiles.find(f => f.Id == file.Id))
+                    this.curUserFiles.push(file)
+            }
+        });
     }
 }

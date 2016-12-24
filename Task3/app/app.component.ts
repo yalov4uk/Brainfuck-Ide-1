@@ -18,17 +18,9 @@ export class AppComponent {
         this.files = [];
         this.interpretManager = new InterpretManager();
         this.curUserFiles = [];
-        this.getFiles();
     }
 
     onChoosing(curFile: IFileModel) {
         this.interpretManager.curFile = curFile;
-    }
-
-    private getFiles(): void {
-        this.mainService.getFiles().subscribe((files) => {
-            for (let file of files)
-                this.curUserFiles.push(file)
-        });
     }
 }

@@ -5,6 +5,7 @@ using Microsoft.AspNet.Identity;
 
 namespace Task3.Controllers
 {
+    [Authorize]
     public class HomeController : Controller
     {
         public ApplicationContext db = new ApplicationContext();
@@ -16,7 +17,7 @@ namespace Task3.Controllers
         [HttpPost]
         public ActionResult Create(FileViewModel file)
         {
-            FileModel curFile = new FileModel{ Name = file.Name, Content = file.Content, UserId = User.Identity.GetUserId() };
+            FileModel curFile = new FileModel(){ Name = file.Name, Content = file.Content, UserId = User.Identity.GetUserId() };
             db.Files.Add(curFile);
             db.SaveChanges();
             return Json(new FileViewModel { Id = curFile.Id, Name = curFile.Name, Content = curFile.Content });
@@ -44,8 +45,7 @@ namespace Task3.Controllers
         public ActionResult GetFiles()
         {
             string curUserId = User.Identity.GetUserId();
-            var files = db.Files;
-            return Json(files.ToArray(), JsonRequestBehavior.AllowGet);
+            return Json(db.Files.Where(f => f.UserId == curUserId).ToArray(), JsonRequestBehavior.AllowGet);
         }
     }
 }

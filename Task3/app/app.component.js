@@ -17,19 +17,9 @@ var AppComponent = (function () {
         this.files = [];
         this.interpretManager = new InterpretManager_1.InterpretManager();
         this.curUserFiles = [];
-        this.getFiles();
     }
     AppComponent.prototype.onChoosing = function (curFile) {
         this.interpretManager.curFile = curFile;
-    };
-    AppComponent.prototype.getFiles = function () {
-        var _this = this;
-        this.mainService.getFiles().subscribe(function (files) {
-            for (var _i = 0, files_1 = files; _i < files_1.length; _i++) {
-                var file = files_1[_i];
-                _this.curUserFiles.push(file);
-            }
-        });
     };
     AppComponent = __decorate([
         core_1.Component({

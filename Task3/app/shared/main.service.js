@@ -36,7 +36,7 @@ var MainService = (function () {
                 operations[interpretManager.curFile.Content[interpretManager.contentPointer]].execute(interpretManager);
         }
         catch (Error) {
-            interpretManager.output += Error.message + '\n';
+            interpretManager.output += '\n' + Error.message;
             interpretManager.contentPointer = interpretManager.curFile.Content.length;
         }
         this.initInterpretManager(interpretManager);
@@ -47,7 +47,7 @@ var MainService = (function () {
                 operations[interpretManager.curFile.Content[interpretManager.contentPointer]].execute(interpretManager);
         }
         catch (Error) {
-            interpretManager.output += Error.message + '\n';
+            interpretManager.output += '\n' + Error.message;
             interpretManager.contentPointer = interpretManager.curFile.Content.length;
         }
         this.initInterpretManager(interpretManager);
